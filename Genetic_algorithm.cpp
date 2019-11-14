@@ -46,3 +46,7 @@ void Genetic_algorithm::suitability_rating() {
     for (Individual& individual : population)
         individual.fitness = fitness_calc(individual.chromosome);
 }
+
+const vector<Individual *> &Genetic_algorithm::getChild() const {
+    return child;
+}

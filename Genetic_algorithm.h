@@ -25,6 +25,8 @@ public:
                       unsigned int chromosomeSize);
 
     [[nodiscard]] const std::vector<Individual> &getPopulation() const;
+    [[nodiscard]] const std::vector<Individual *> &getChild() const;
+
 
 private:
     //g_max >= g_min
