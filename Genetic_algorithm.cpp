@@ -5,6 +5,7 @@
 #include "Genetic_algorithm.h"
 #include <stdexcept>
 #include <ctime>
+#include <algorithm>
 
 using namespace std;
 
@@ -38,15 +39,37 @@ void Genetic_algorithm::initialization() {
     }
 }
 
-const vector<Individual> &Genetic_algorithm::getPopulation() const {
+const vector<Individual> &Genetic_algorithm::getPopulation() const
+{
     return population;
 }
 
-void Genetic_algorithm::suitability_rating() {
+void Genetic_algorithm::suitability_rating()
+{
     for (Individual& individual : population)
         individual.fitness = fitness_calc(individual.chromosome);
 }
 
-const vector<Individual *> &Genetic_algorithm::getChild() const {
+const vector<Individual *> &Genetic_algorithm::getChild() const
+{
     return child;
+}
+
+std::vector<double> Genetic_algorithm::study(unsigned int max_iteration, double good_error,
+                                             double (*get_error)(std::vector<double> &))
+{
+    sort(population.begin(), population.end(),
+            [](const Individual& a, const Individual& b){ return a.fitness > b.fitness;});
+    unsigned  int cur_iteration{1};
+    double cur_min_error = get_error(population[0].chromosome);
+    while (cur_iteration <= max_iteration && cur_min_error > good_error)
+    {
+
+        sort(population.begin(), population.end(),
+                [](const Individual& a, const Individual& b){ return a.fitness > b.fitness;});
+        cur_iteration++;
+        cur_min_error = get_error(population[0].chromosome);
+    }
+
+    return population[0].chromosome;
 }

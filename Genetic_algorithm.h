@@ -27,6 +27,7 @@ public:
     [[nodiscard]] const std::vector<Individual> &getPopulation() const;
     [[nodiscard]] const std::vector<Individual *> &getChild() const;
 
+    std::vector<double> study(unsigned int max_iteration, double good_error, double (*get_error)(std::vector<double>&));
 
 private:
     //g_max >= g_min
