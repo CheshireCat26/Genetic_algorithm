@@ -46,7 +46,6 @@ private:
     std::random_device rd;
     std::default_random_engine random_engine;
 
-
     void initialization();
     void suitability_rating();
 };
