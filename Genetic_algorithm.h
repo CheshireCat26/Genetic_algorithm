@@ -42,10 +42,10 @@ private:
 
     std::random_device rd;
     std::default_random_engine random_engine;
-    std::uniform_real_distribution<double> distribution;
 
 
     void initialization();
+
 };
 
 

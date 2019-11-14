@@ -14,7 +14,6 @@ Genetic_algorithm::Genetic_algorithm(double gMax, double gMin, double (*fitnessC
                                      : g_max(gMax), g_min(gMin), fitness_calc(fitnessCalc), crossover_p(crossoverP),
                                        classic_mut_chan(classicMutChan), sigma_mut_chan(sigmaMutChan),
                                        population_size(populationSize), chromosome_size(chromosomeSize),
-                                       distribution(g_min, g_max)
 {
     random_engine.seed(rd());
     if (gMax < gMax)
@@ -26,6 +25,7 @@ Genetic_algorithm::Genetic_algorithm(double gMax, double gMin, double (*fitnessC
 }
 
 void Genetic_algorithm::initialization() {
+    uniform_real_distribution distribution(g_min, g_max);
     for (int i = 0; i < population_size; i++)
     {
         Individual individual(chromosome_size);
