@@ -24,7 +24,7 @@ public:
                       double classicMutChan, double sigmaMutChan, unsigned int populationSize,
                       unsigned int chromosomeSize);
 
-    const std::vector<Individual> &getPopulation() const;
+    [[nodiscard]] const std::vector<Individual> &getPopulation() const;
 
 private:
     //g_max >= g_min
@@ -45,7 +45,7 @@ private:
 
 
     void initialization();
-
+    void suitability_rating();
 };
 
 

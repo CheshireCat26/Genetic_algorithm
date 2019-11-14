@@ -13,7 +13,7 @@ Genetic_algorithm::Genetic_algorithm(double gMax, double gMin, double (*fitnessC
                                      unsigned int populationSize, unsigned int chromosomeSize)
                                      : g_max(gMax), g_min(gMin), fitness_calc(fitnessCalc), crossover_p(crossoverP),
                                        classic_mut_chan(classicMutChan), sigma_mut_chan(sigmaMutChan),
-                                       population_size(populationSize), chromosome_size(chromosomeSize),
+                                       population_size(populationSize), chromosome_size(chromosomeSize)
 {
     random_engine.seed(rd());
     if (gMax < gMax)
@@ -22,14 +22,15 @@ Genetic_algorithm::Genetic_algorithm(double gMax, double gMin, double (*fitnessC
         throw runtime_error("Genetic_algorithm::Genetic_algorithm(): classicMutChan + sigmaMutChan must be <= 1");
 
     initialization();
+    suitability_rating();
 }
 
 void Genetic_algorithm::initialization() {
     uniform_real_distribution distribution(g_min, g_max);
-    for (int i = 0; i < population_size; i++)
+    for (unsigned int i = 0; i < population_size; i++)
     {
         Individual individual(chromosome_size);
-        for (int j = 0; j < chromosome_size; j++)
+        for (unsigned int j = 0; j < chromosome_size; j++)
         {
             individual.chromosome[j] = distribution(random_engine);
         }
@@ -39,4 +40,9 @@ void Genetic_algorithm::initialization() {
 
 const vector<Individual> &Genetic_algorithm::getPopulation() const {
     return population;
+}
+
+void Genetic_algorithm::suitability_rating() {
+    for (Individual& individual : population)
+        individual.fitness = fitness_calc(individual.chromosome);
 }
