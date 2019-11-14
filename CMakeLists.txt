@@ -3,5 +3,5 @@ project(genetic_algorithm)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(genetic_algorithm main.cpp)
+add_executable(genetic_algorithm main.cpp Genetic_algorithm.cpp Genetic_algorithm.h)
 add_subdirectory(Google_tests)
