@@ -40,7 +40,7 @@ private:
     std::vector<Individual> population;
     std::vector<Individual*> child; //child at last iteration
     unsigned int chromosome_size;
-    double crossover_coef; //coefficent of crossover
+    double crossover_coef; //coefficient of crossover
 
     std::random_device rd;
     std::default_random_engine random_engine;
