@@ -13,6 +13,7 @@ public:
     std::vector<double> chromosome;
     double fitness;
     double chance; // is chance to be selected at crossover
+    bool child{false};
 
     explicit Individual(unsigned int chrom_size) : fitness{0}, chance{0}, chromosome(chrom_size) { }
 };
@@ -38,7 +39,6 @@ private:
     double sigma_mut_chan; //chance of sigma mutation;
     unsigned int population_size;
     std::vector<Individual> population;
-    std::vector<Individual*> child; //child at last iteration
     unsigned int chromosome_size;
     double crossover_coef; //coefficient of crossover
 
@@ -60,4 +60,11 @@ private:
     void clear_children();
     //return size of population to population_size
     void formation_new_population();
+    void mutation();
+    void classic_mutation(std::vector<Individual*> child);
+    void sigma_mitation(std::vector<Individual*> child);
+    //return random child and replace it's place with nullptr in child vector
+    Individual& get_random_child(std::vector<Individual*>& child);
+    //return id of gene that wasn't taken (taken_gene hasn't it)
+    int get_random_gene(std::vector<int> taken_gene);
 };

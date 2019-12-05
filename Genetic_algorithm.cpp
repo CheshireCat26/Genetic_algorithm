@@ -51,11 +51,6 @@ void Genetic_algorithm::suitability_rating()
         individual.fitness = fitness_calc(individual.chromosome);
 }
 
-const vector<Individual *> &Genetic_algorithm::getChild() const
-{
-    return child;
-}
-
 std::vector<double> Genetic_algorithm::study(unsigned int max_iteration, double good_error,
                                              double (*get_error)(std::vector<double> &))
 {
@@ -78,7 +73,8 @@ std::vector<double> Genetic_algorithm::study(unsigned int max_iteration, double 
         selection();
         //2 loop step
         crossover();
-
+        //3 loop step
+        mutation();
         //4 loop step
         suitability_rating();
         //5 loop step
@@ -91,7 +87,6 @@ std::vector<double> Genetic_algorithm::study(unsigned int max_iteration, double 
         //end loop operations
         calculate_sum_fitness();
         cur_iteration++;
-        clear_children();
     }
 
     return population[0].chromosome;
@@ -110,17 +105,17 @@ void Genetic_algorithm::crossover()
         //generate crossover_points
         int crossover_point = crossover_p_distribution(random_engine);
         //create first child
-        Individual child1(parent1.chromosome.size());
+        Individual child1 = Individual(parent1.chromosome.size());
         child1.chromosome = generate_chromosome(parent1.chromosome, parent2.chromosome, crossover_point);
+        child1.child = true;
         //create second child
-        Individual child2(parent1.chromosome.size());
+        Individual child2 = Individual(parent1.chromosome.size());
         child2.chromosome = generate_chromosome(parent2.chromosome, parent1.chromosome, crossover_point);
+        child2.child = true;
 
         population.emplace_back(child1);
-        child.emplace_back(&population[population.size()-1]);
 
         population.emplace_back(child2);
-        child.emplace_back(&population[population.size()-1]);
     }
 
 }
@@ -154,7 +149,8 @@ void Genetic_algorithm::selection()
 
 }
 
-std::vector<double> Genetic_algorithm::generate_list_chances() {
+std::vector<double> Genetic_algorithm::generate_list_chances()
+{
     vector<double> chances;
     for (const Individual& individual : population)
         chances.emplace_back(individual.chance);
@@ -172,14 +168,81 @@ std::vector<double> Genetic_algorithm::generate_chromosome(const std::vector<dou
     return chrom;
 }
 
-void Genetic_algorithm::clear_children() {
-    for (int i{0}; i < child.size(); i++)
-        child[i] = nullptr;
-    child.clear();
-}
-
-void Genetic_algorithm::formation_new_population() {
+void Genetic_algorithm::formation_new_population()
+{
     while (population.size() > population_size)
         population.erase(population.end() - 1);
+}
+
+void Genetic_algorithm::mutation()
+{
+    vector<Individual *> child;
+    for (Individual& individual : population)
+        if (individual.child)
+            child.emplace_back(&individual);
+
+    classic_mutation(child);
+    sigma_mitation(child);
+
+    for(Individual& individual1 : population)
+        if (individual1.child)
+            individual1.child = false;
+}
+
+void Genetic_algorithm::classic_mutation(std::vector<Individual*> child)
+{
+    const double small_value = 0.001;
+    uniform_int_distribution distribution(1, static_cast<int>(child[0]->chromosome.size()));
+    uniform_int_distribution bin_distribution(0, 1);
+    for (int i{0}; i < round(child.size() * classic_mut_chan); i++)
+    {
+        Individual& mut_child = get_random_child(child);
+        //mutation of random number of genes
+        int number_genes = distribution(random_engine);
+        vector<int> id_genes;
+        for(int j{0}; j < number_genes; j++)
+        {
+            id_genes.emplace_back(get_random_gene(id_genes));
+            if (bin_distribution(random_engine))
+                mut_child.chromosome[id_genes[id_genes.size() - 1]] += small_value;
+            else
+                mut_child.chromosome[id_genes[id_genes.size() - 1]] -= small_value;
+        }
+    }
+}
+
+Individual &Genetic_algorithm::get_random_child(std::vector<Individual*>& child)
+{
+    uniform_int_distribution distribution(0, static_cast<int>(child.size() - 1));
+    while (true)
+    {
+        int id_child = distribution(random_engine);
+        if (child[id_child] != nullptr)
+        {
+            Individual* ret = child[id_child];
+            child[id_child] = nullptr;
+            return *ret;
+        }
+    }
+}
+
+int Genetic_algorithm::get_random_gene(std::vector<int> taken_gene) {
+    uniform_int_distribution distribution(0, static_cast<int>(population[0].chromosome.size() - 1));
+    while (true)
+    {
+        int id_gene = distribution(random_engine);
+        bool taken = false;
+        for (int i = 0; i < taken_gene.size() && !taken; i++)
+            if (taken_gene[i] == id_gene)
+                taken = true;
+
+        if (!taken)
+            return  id_gene;
+    }
+}
+
+void Genetic_algorithm::sigma_mitation(std::vector<Individual*> child)
+{
+    //TODO implement
 }
 
