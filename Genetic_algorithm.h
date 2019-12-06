@@ -55,8 +55,6 @@ private:
     //generate child for two parent; left parent gives left part of chromosome, right parent gives right part;
     std::vector<double> generate_chromosome(const std::vector<double>& left_parent, const std::vector<double>& right_parent,
                                             int crossover_point);
-    //clear childer vector, but doesn't destroy objects witch it has.
-    void clear_children();
     //return size of population to population_size
     void formation_new_population();
     void mutation();
